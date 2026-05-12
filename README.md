@@ -2,7 +2,7 @@
 
 **KochBox** is a concept for an affordable, warm, and healthy food vending machine system designed for everyday people. It is targeted at locations such as the Technische Hochschule Ingolstadt (THI), hospitals, and train stations.
 
-👉 **[View the Live Interactive Prototype Here](https://lizomander.github.io/kochbox-prototype/)**
+👉 **[View the Live Interactive Prototype Here](https://lizomander.github.io/Kochbox-prototype/)**
 
 ## 🎯 The Concept
 People often need quick, nutritious, and warm meals at odd hours. KochBox solves this by offering a smart, accessible kiosk system. 
