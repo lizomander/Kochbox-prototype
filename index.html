@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +40,20 @@
     
     .sketch-box {
       background: var(--white); border: 2px dashed var(--border); border-radius: 16px;
-      padding: 60px 20px; text-align: center; color: var(--text-muted);
+      padding: 40px; text-align: center; color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .sketch-box img {
+      max-width: 350px; 
+      width: 100%; 
+      border-radius: 12px; 
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08); 
+      border: 1px solid var(--border);
     }
   </style>
 </head>
@@ -49,38 +62,41 @@
   <div class="container">
     <header>
       <div class="logo">🌿 KochBox</div>
-      <p class="subtitle">Ein smartes, inklusives Verpflegungssystem für die Technische Hochschule Ingolstadt. Prototypen und Konzepte.</p>
+      <p class="subtitle">A smart, inclusive food vending system for the Technische Hochschule Ingolstadt. Prototypes and Concepts.</p>
     </header>
 
     <div class="grid">
       <a href="kochbox-mockups.html" class="card">
         <div class="card-icon">📱</div>
         <div class="card-title">UI Design System</div>
-        <div class="card-desc">Visuelle Präsentation der App-Layouts für Mobile, Tablet, Desktop und Kiosk.</div>
-        <div class="card-link">Ansehen →</div>
+        <div class="card-desc">Visual presentation of the app layouts for Mobile, Tablet, Desktop, and Kiosk.</div>
+        <div class="card-link">View →</div>
       </a>
 
       <a href="app.html" class="card">
         <div class="card-icon">🛒</div>
-        <div class="card-title">Interaktive Web-App</div>
-        <div class="card-desc">Ein klickbarer Prototyp der Bestell-App mit Warenkorb, Filtern und Barrierefreiheit.</div>
-        <div class="card-link">Testen →</div>
+        <div class="card-title">Interactive Web App</div>
+        <div class="card-desc">A clickable prototype of the ordering app featuring a shopping cart, filters, and accessibility options.</div>
+        <div class="card-link">Try it out →</div>
       </a>
 
       <a href="kiosk.html" class="card">
         <div class="card-icon">♿</div>
-        <div class="card-title">Inklusiver Automat</div>
-        <div class="card-desc">Das Hardware-Konzept: Touchscreen kombiniert mit taktilen Tasten und Audio für Blinde.</div>
-        <div class="card-link">Ansehen →</div>
+        <div class="card-title">Inclusive Kiosk</div>
+        <div class="card-desc">The hardware concept: A touchscreen combined with tactile buttons and audio guidance for visually impaired users.</div>
+        <div class="card-link">View →</div>
       </a>
     </div>
 
-    <h2 class="section-title">Konzept & Skizzen</h2>
+    <h2 class="section-title">Concept & Sketches</h2>
     <div class="sketch-box">
-      <div style="font-size: 3rem; margin-bottom: 15px;">✏️</div>
-      <h3>Hier kommen die Zeichnungen rein</h3>
-      <p style="margin-top: 10px;">Fügen Sie Ihre eingescannten Skizzen oder Fotos des Hardware-Designs hier ein.</p>
-    </div>
+      <img src="images/first-prototype.jpeg" alt="First prototype sketches.">
+      <img src="images/plate.png" alt="Possible look for the container.">
+      <img src="images/spork.png" alt="Possible look for the utensil.">
+      <img src="images/vendmach1.png" alt="https://www.dimensions.com/element/snack-vending-machine-large">
+      <img src="images/vendmach2.png" alt="https://www.dimensions.com/element/snack-vending-machine-large"> 
+      <img src="images/murphytable.png" alt="https://spacesave.co.za/cdn/shop/files/SpaceSave-Wall-Mounted-Folding-Table-57x37_2.jpg?v=1771939873&width=1946">
+      </div>
 
   </div>
 
