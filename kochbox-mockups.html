@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KochBox UI Mockups</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    :root {
+      --green: #1f4e3d; --green-light: #2d6e55; --green-pale: #e6f2ec;
+      --amber: #f4a227; --amber-pale: #fef3e0;
+      --cream: #fdf8f0; --white: #ffffff;
+      --text: #1a1a1a; --text-muted: #7a7a7a; --border: #e5dfd5;
+      --font-serif: 'Fraunces', serif; --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background-color: #f4f1eb; color: var(--text); padding: 40px 20px; }
+    
+    .presentation-header { text-align: center; margin-bottom: 50px; }
+    .presentation-header h1 { font-family: var(--font-serif); font-size: 2.5rem; color: var(--green); margin-bottom: 10px; }
+    .presentation-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+    .showcase-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-bottom: 60px; }
+    .showcase-col { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .device-label { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; color: var(--green); }
+
+    /* --- DEVICE FRAMES --- */
+    .frame { background: var(--white); border: 8px solid #333; overflow: hidden; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    .phone { width: 320px; height: 650px; border-radius: 40px; }
+    .notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: #333; border-radius: 0 0 15px 15px; z-index: 10; }
+    .tablet { width: 500px; height: 700px; border-radius: 24px; }
+    .desktop { width: 900px; height: 600px; border-radius: 12px; border-width: 12px 12px 24px 12px; border-color: #d1d5db; box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+    .kiosk { width: 450px; height: 800px; border-radius: 16px; border: 16px solid #1a1a1a; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: var(--cream); }
+
+    /* --- UI COMPONENT STYLES (Shared across devices) --- */
+    .ui-header { background: var(--green); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .ui-logo { font-family: var(--font-serif); font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+    .ui-logo i { color: var(--amber); }
+    .ui-nav-icons { display: flex; gap: 12px; }
+    .ui-nav-icons i { font-size: 1.2rem; }
+    
+    .ui-body { padding: 20px; height: 100%; overflow-y: auto; background: var(--cream); }
+    .ui-title { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 15px; }
+    
+    .ui-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); display: flex; gap: 15px; align-items: center; }
+    .ui-card-img { width: 60px; height: 60px; background: var(--cream); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .ui-card-info { flex: 1; }
+    .ui-card-title { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+    .ui-card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
+    
+    .ui-tag { background: var(--green-pale); color: var(--green); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+    .ui-tag.warn { background: #fdeaea; color: #d94f4f; }
+    .ui-tag.amber { background: var(--amber-pale); color: #c4821a; }
+    
+    .ui-price { font-family: var(--font-serif); font-weight: 700; color: var(--green); font-size: 1.1rem; }
+    .ui-btn { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .ui-btn.amber { background: var(--amber); color: var(--green); }
+
+    /* Mobile specific */
+    .ui-bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0 25px; }
+    .ui-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--text-muted); }
+    .ui-nav-item.active { color: var(--green); }
+
+    /* Desktop specific */
+    .desk-layout { display: flex; height: 100%; background: var(--cream); }
+    .desk-sidebar { width: 220px; background: white; border-right: 1px solid var(--border); padding: 20px; }
+    .desk-main { flex: 1; padding: 30px; overflow-y: auto; }
+    .desk-cart { width: 280px; background: white; border-left: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
+    .desk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+    /* Kiosk specific */
+    .kiosk-topbar { background: #111; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; }
+    .kiosk-access-btns { display: flex; gap: 10px; }
+    .kiosk-btn { background: #333; border: 2px solid #555; color: white; padding: 10px 15px; border-radius: 8px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+    .kiosk-hero { background: var(--green); color: white; padding: 40px 20px; text-align: center; }
+    .kiosk-hero h2 { font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 10px; }
+    .kiosk-hero p { font-size: 1.1rem; color: var(--amber); font-weight: 600; }
+    .kiosk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
+    .kiosk-tile { background: white; border-radius: 16px; padding: 25px 15px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .kiosk-tile i { font-size: 3rem; margin-bottom: 15px; display: block; }
+    .kiosk-tile-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin-bottom: 5px; }
+    .kiosk-footer { position: absolute; bottom: 0; width: 100%; padding: 20px; background: white; border-top: 2px solid var(--border); display: flex; gap: 15px; }
+    .kiosk-main-btn { flex: 1; padding: 20px; border-radius: 12px; font-size: 1.4rem; font-weight: 700; border: none; display: flex; justify-content: center; align-items: center; gap: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="presentation-header">
+    <h1>KochBox UI System</h1>
+    <p>Responsive App & Vending Machine Prototype (THI Ingolstadt)</p>
+  </div>
+
+  <div class="showcase-row">
+    <div class="showcase-col">
+      <div class="device-label">Mobile App</div>
+      <div class="frame phone">
+        <div class="notch"></div>
+        <div class="ui-header" style="padding-top: 35px;">
+          <div class="ui-logo"><i class="ti ti-leaf"></i> KochBox</div>
+          <div class="ui-nav-icons"><i class="ti ti-accessible"></i><i class="ti ti-shopping-cart"></i></div>
+        </div>
+        <div class="ui-body">
+          <div style="display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;">
+            <span class="ui-tag" style="background:var(--green);color:white;font-size:0.85rem;padding:6px 12px;">Alle</span>
+            <span class="ui-tag" style="background:white;border:1px solid var(--border);font-size:0.85rem;padding:6px 12px;">Vegan 🌱</span>
+            <span class="ui-tag warn" style="font-size:0.85rem;padding:6px 12px;">Ohne Nüsse 🥜</span>
+          </div>
+          <h2 class="ui-title">Warme Speisen</h2>
+          
+          <div class="ui-card">
+            <div class="ui-card-img">🍲</div>
+            <div class="ui-card-info">
+              <div class="ui-card-title">Linsensuppe</div>
+              <div class="ui-card-meta">320 kcal • <span class="ui-tag">Vegan</span></div>
+              <div class="ui-card-meta" style="margin-top: 6px; font-weight: 600; color: #4caf50;"><i class="ti ti-check"></i> THI Foyer (5 min)</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="ui-price">3,90 €</div>
+              <button class="ui-btn" style="margin-top: 8px; width: 100%; justify-content: center;"><i class="ti ti-plus"></i></button>
+            </div>
+          </div>
+
+          <div class="ui-card">
+            <div class="ui-card-img">🍛</div>
+            <div class="ui-card-info">
+              <div class="ui-card-title">Gemüsecurry</div>
+              <div class="ui-card-meta">480 kcal • <span class="ui-tag warn">Gluten</span></div>
+            </div>
+            <div style="text-align: right;">
+              <div class="ui-price">5,90 €</div>
+              <button class="ui-btn" style="margin-top: 8px; width: 100%; justify-content: center;"><i class="ti ti-plus"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="ui-bottom-nav">
+          <div class="ui-nav-item active"><i class="ti ti-home" style="font-size: 1.5rem;"></i> Start</div>
+          <div class="ui-nav-item"><i class="ti ti-search" style="font-size: 1.5rem;"></i> Suchen</div>
+          <div class="ui-nav-item"><i class="ti ti-map-pin" style="font-size: 1.5rem;"></i> Automaten</div>
+          <div class="ui-nav-item"><i class="ti ti-user" style="font-size: 1.5rem;"></i> Profil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-col">
+      <div class="device-label">Tablet / iPad</div>
+      <div class="frame tablet">
+        <div class="ui-header">
+          <div class="ui-logo"><i class="ti ti-leaf"></i> KochBox</div>
+          <div class="ui-nav-icons" style="display: flex; align-items: center; gap: 20px;">
+            <span style="font-size: 0.9rem; font-weight: 600; background: var(--amber); color: var(--green); padding: 4px 10px; border-radius: 20px;">⭐ 247 Punkte</span>
+            <i class="ti ti-accessible"></i>
+            <i class="ti ti-language"></i> EN
+            <i class="ti ti-shopping-cart"></i>
+          </div>
+        </div>
+        <div style="display: flex; height: calc(100% - 55px);">
+          <div style="width: 80px; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 30px;">
+            <div class="ui-nav-item active"><i class="ti ti-home" style="font-size: 1.8rem;"></i> Home</div>
+            <div class="ui-nav-item"><i class="ti ti-map-pin" style="font-size: 1.8rem;"></i> Map</div>
+            <div class="ui-nav-item"><i class="ti ti-star" style="font-size: 1.8rem;"></i> Saved</div>
+            <div class="ui-nav-item"><i class="ti ti-user" style="font-size: 1.8rem;"></i> Profile</div>
+          </div>
+          <div class="ui-body" style="flex: 1;">
+            <div style="background: linear-gradient(135deg, var(--green), var(--green-light)); border-radius: 16px; padding: 25px; color: white; margin-bottom: 20px;">
+              <h2 style="font-family: var(--font-serif); margin-bottom: 8px;">Mittagszeit! 🌞</h2>
+              <p>Freshly prepared & kept warm for you at the library block.</p>
+            </div>
+            <h2 class="ui-title">Our Selection</h2>
+            <div class="ui-card">
+              <div class="ui-card-img">🌯</div>
+              <div class="ui-card-info">
+                <div class="ui-card-title">Chicken Wrap</div>
+                <div class="ui-card-meta">520 kcal • High Protein</div>
+                <div style="margin-top: 8px;">
+                  <span class="ui-tag warn">Lactose</span> <span class="ui-tag warn">Gluten</span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div class="ui-price">5,50 €</div>
+                <button class="ui-btn" style="margin-top: 8px;"><i class="ti ti-plus"></i> Add</button>
+              </div>
+            </div>
+            <div class="ui-card">
+              <div class="ui-card-img">🥗</div>
+              <div class="ui-card-info">
+                <div class="ui-card-title">Greek Salad</div>
+                <div class="ui-card-meta">290 kcal • Vegetarian</div>
+                <div style="margin-top: 8px;">
+                  <span class="ui-tag">Nut-free</span>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div class="ui-price">4,80 €</div>
+                <button class="ui-btn" style="margin-top: 8px;"><i class="ti ti-plus"></i> Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="showcase-row">
+    <div class="showcase-col">
+      <div class="device-label">Desktop Web App</div>
+      <div class="frame desktop">
+        <div class="ui-header">
+          <div class="ui-logo"><i class="ti ti-leaf"></i> KochBox Web</div>
+          <div class="ui-nav-icons" style="align-items: center; gap: 20px;">
+            <span><i class="ti ti-accessible"></i> Accessibility</span>
+            <span><i class="ti ti-language"></i> DE / EN</span>
+            <span><i class="ti ti-user"></i> Lola (247 Pts)</span>
+          </div>
+        </div>
+        <div class="desk-layout">
+          <div class="desk-sidebar">
+            <h4 style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 15px;">Categories</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="padding: 10px; background: var(--green-pale); color: var(--green); border-radius: 8px; font-weight: 600;">🍽️ All Items</div>
+              <div style="padding: 10px; color: var(--text-muted);">🍲 Hot Meals</div>
+              <div style="padding: 10px; color: var(--text-muted);">🥗 Salads</div>
+              <div style="padding: 10px; color: var(--text-muted);">🥤 Drinks</div>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+            <h4 style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 15px;">Allergen Filters</h4>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <input type="checkbox" checked> <span>Vegan Only 🌱</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="checkbox"> <span>Gluten-free 🌾</span>
+            </div>
+          </div>
+          
+          <div class="desk-main">
+            <h2 class="ui-title">Available at THI Foyer</h2>
+            <div class="desk-grid">
+              <div style="background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                <div style="height: 120px; background: var(--cream); font-size: 4rem; display: flex; justify-content: center; align-items: center; position: relative;">
+                  🍲
+                  <span style="position: absolute; top: 10px; right: 10px; background: #e8f5e9; color: #2e7d32; font-size: 0.7rem; font-weight: bold; padding: 4px 8px; border-radius: 12px;">In Stock (A1)</span>
+                </div>
+                <div style="padding: 15px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <h3 style="font-size: 1.1rem;">Lentil Soup</h3>
+                    <div class="ui-price">3,90 €</div>
+                  </div>
+                  <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Homemade, 500ml • 320 kcal</p>
+                  <button class="ui-btn" style="width: 100%; justify-content: center;"><i class="ti ti-shopping-cart-plus"></i> Add to Order</button>
+                </div>
+              </div>
+              
+              <div style="background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                <div style="height: 120px; background: var(--cream); font-size: 4rem; display: flex; justify-content: center; align-items: center; position: relative;">
+                  ☕
+                </div>
+                <div style="padding: 15px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <h3 style="font-size: 1.1rem;">Oat Cappuccino</h3>
+                    <div class="ui-price">2,90 €</div>
+                  </div>
+                  <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Organic oat milk • 120 kcal</p>
+                  <button class="ui-btn" style="width: 100%; justify-content: center;"><i class="ti ti-shopping-cart-plus"></i> Add to Order</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="desk-cart">
+            <h3 style="font-family: var(--font-serif); margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">🛒 My Order</h3>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+              <div style="font-size: 1.5rem; background: var(--cream); padding: 5px; border-radius: 8px;">🍲</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 0.9rem;">Lentil Soup</div>
+                <div style="color: var(--green); font-weight: bold;">3,90 €</div>
+              </div>
+              <div style="font-weight: bold;">x1</div>
+            </div>
+
+            <div style="background: var(--amber-pale); border: 1px solid var(--amber); border-radius: 8px; padding: 12px; margin-top: auto; margin-bottom: 20px;">
+              <h4 style="font-size: 0.85rem; color: #c4821a; margin-bottom: 8px;"><i class="ti ti-cup"></i> Cup Selection</h4>
+              <div style="display: flex; gap: 5px;">
+                <div style="flex: 1; background: white; border: 2px solid var(--green); border-radius: 6px; padding: 8px; text-align: center; font-size: 0.8rem; font-weight: bold; color: var(--green);">
+                  ♻️ Reusable<br><span style="font-size: 0.7rem; font-weight: normal;">+1,00 € Pfand</span>
+                </div>
+                <div style="flex: 1; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 8px; text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+                  🥤 Single-use<br><span style="font-size: 0.7rem;">0,00 €</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--border); padding-top: 15px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;"><span>Subtotal</span><span>3,90 €</span></div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px;"><span>Deposit (Pfand)</span><span>1,00 €</span></div>
+              <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: var(--green); margin-bottom: 15px;"><span>Total</span><span>4,90 €</span></div>
+              <button class="ui-btn" style="width: 100%; padding: 15px; font-size: 1.1rem; justify-content: center;">Checkout <i class="ti ti-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-col">
+      <div class="device-label">Physical Vending Machine (Touchscreen)</div>
+      <div class="frame kiosk">
+        <div class="kiosk-topbar">
+          <div class="kiosk-access-btns">
+            <button class="kiosk-btn" title="Audio Guidance"><i class="ti ti-volume"></i></button>
+            <button class="kiosk-btn" title="High Contrast"><i class="ti ti-moon"></i></button>
+            <button class="kiosk-btn" title="Screen Reader Mode"><i class="ti ti-accessible"></i></button>
+          </div>
+          <div class="kiosk-access-btns">
+            <button class="kiosk-btn" style="border-color: var(--amber); color: var(--amber);">DE</button>
+            <button class="kiosk-btn">EN</button>
+          </div>
+        </div>
+        
+        <div class="kiosk-hero">
+          <h2>Willkommen!</h2>
+          <p>Gesundes, warmes Essen in Sekunden.</p>
+        </div>
+
+        <div class="kiosk-grid">
+          <div class="kiosk-tile" style="grid-column: span 2; display: flex; align-items: center; justify-content: center; gap: 20px; background: var(--green-pale); border-color: var(--green);">
+            <i class="ti ti-qrcode" style="margin: 0; color: var(--green);"></i>
+            <div style="text-align: left;">
+              <div class="kiosk-tile-title">Bestellung abholen</div>
+              <div style="color: var(--text-muted);">QR Code scannen oder Pin eingeben</div>
+            </div>
+          </div>
+          
+          <div class="kiosk-tile">
+            <i>🍲</i>
+            <div class="kiosk-tile-title">Warme Speisen</div>
+          </div>
+          <div class="kiosk-tile">
+            <i>🥗</i>
+            <div class="kiosk-tile-title">Salate & Snacks</div>
+          </div>
+          <div class="kiosk-tile">
+            <i>🥤</i>
+            <div class="kiosk-tile-title">Getränke</div>
+          </div>
+          <div class="kiosk-tile">
+            <i>☕</i>
+            <div class="kiosk-tile-title">Frühstück</div>
+          </div>
+        </div>
+
+        <div class="kiosk-footer">
+          <button class="kiosk-main-btn" style="background: white; border: 2px solid var(--border); color: var(--text);">
+            <i class="ti ti-recycle" style="color: var(--green); font-size: 1.8rem;"></i> Pfand zurückgeben
+          </button>
+          <button class="kiosk-main-btn" style="background: var(--green); color: white;">
+            Hier bestellen <i class="ti ti-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

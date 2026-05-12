@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KochBox — Gesundes Essen für Alle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:       #1f4e3d;
+      --green-mid:   #2d6e55;
+      --green-light: #4a9470;
+      --green-pale:  #e6f2ec;
+      --amber:       #f4a227;
+      --amber-dark:  #c4821a;
+      --amber-pale:  #fef3e0;
+      --cream:       #fdf8f0;
+      --white:       #ffffff;
+      --text:        #1a1a1a;
+      --text-2:      #3a3a3a;
+      --muted:       #7a7a7a;
+      --border:      #e5dfd5;
+      --red:         #d94f4f;
+      --red-pale:    #fdeaea;
+      --blue:        #3a7bd5;
+      --font-d:      'Fraunces', Georgia, serif;
+      --font-b:      'Plus Jakarta Sans', system-ui, sans-serif;
+      --r:           14px;
+      --r-lg:        20px;
+      --shadow:      0 2px 16px rgba(0,0,0,0.08);
+      --shadow-lg:   0 8px 32px rgba(0,0,0,0.12);
+      --transition:  all 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    .hc { /* high contrast overrides */
+      --green: #000000;
+      --green-mid: #000000;
+      --green-light: #222222;
+      --green-pale: #ffffff;
+      --cream: #ffffff;
+      --text: #000000;
+      --muted: #333333;
+      --border: #000000;
+      --amber: #ffcc00;
+    }
+    .large-text { font-size: 120% !important; }
+    .large-text * { font-size: inherit; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--font-b); background: var(--cream); color: var(--text); scroll-behavior: smooth; }
+    body { min-height: 100dvh; display: flex; flex-direction: column; }
+
+    /* ── SKIP LINK ── */
+    .skip-link {
+      position: absolute; top: -99px; left: 8px; z-index: 9999;
+      background: var(--amber); color: var(--text); padding: 8px 16px;
+      border-radius: var(--r); font-weight: 700; text-decoration: none;
+      transition: var(--transition);
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--green); color: var(--white);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-d); font-size: 1.4rem; font-weight: 900; color: var(--white); text-decoration: none; flex: 1; }
+    .logo-icon { width: 36px; height: 36px; background: var(--amber); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .hbtn {
+      background: rgba(255,255,255,0.12); border: none; color: var(--white);
+      border-radius: 10px; padding: 7px 12px; cursor: pointer; font-family: var(--font-b);
+      font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 6px;
+      transition: var(--transition); white-space: nowrap;
+    }
+    .hbtn:hover, .hbtn:focus { background: rgba(255,255,255,0.22); outline: 2px solid var(--amber); outline-offset: 2px; }
+    .points-badge { background: var(--amber); color: var(--green); border-radius: 10px; padding: 7px 12px; font-weight: 700; font-size: 0.82rem; }
+    .cart-btn { position: relative; }
+    .cart-count { position: absolute; top: -6px; right: -6px; background: var(--red); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+    /* ── LAYOUT ── */
+    .app-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px; background: var(--white); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      transition: var(--transition); overflow-y: auto;
+    }
+    @media (max-width: 767px) { .sidebar { display: none; } }
+    @media (min-width: 768px) and (max-width: 1199px) { .sidebar { width: 200px; } }
+
+    .sidebar-search { padding: 16px; border-bottom: 1px solid var(--border); }
+    .search-input {
+      width: 100%; background: var(--cream); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 10px 14px 10px 36px; font-family: var(--font-b);
+      font-size: 0.88rem; color: var(--text); outline: none; transition: var(--transition);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 12px center;
+    }
+    .search-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-pale); }
+
+    .sidebar-section { padding: 16px 12px 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .cat-btn {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 10px 16px; background: none; border: none; cursor: pointer;
+      font-family: var(--font-b); font-size: 0.9rem; color: var(--text-2);
+      border-radius: var(--r); text-align: left; transition: var(--transition);
+    }
+    .cat-btn:hover { background: var(--cream); }
+    .cat-btn.active { background: var(--green-pale); color: var(--green); font-weight: 700; }
+    .cat-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+    .cat-count { margin-left: auto; background: var(--cream); border-radius: 20px; padding: 2px 8px; font-size: 0.72rem; color: var(--muted); }
+    .cat-btn.active .cat-count { background: var(--green); color: white; }
+
+    .allergen-filter-btn {
+      margin: 12px; background: var(--amber-pale); border: 1.5px solid var(--amber);
+      border-radius: var(--r); padding: 10px 14px; cursor: pointer; font-family: var(--font-b);
+      font-size: 0.85rem; font-weight: 600; color: var(--amber-dark); display: flex;
+      align-items: center; gap: 8px; transition: var(--transition);
+    }
+    .allergen-filter-btn:hover { background: var(--amber); color: white; }
+    .stock-indicator { margin: 0 12px 16px; background: var(--green-pale); border-radius: var(--r); padding: 12px; }
+    .stock-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; margin-bottom: 6px; }
+    .stock-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .stock-high { background: #4caf50; }
+    .stock-med  { background: var(--amber); }
+    .stock-low  { background: var(--red); }
+
+    /* ── MAIN CONTENT ── */
+    .main-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Mobile search */
+    .mobile-search { display: none; }
+    @media (max-width: 767px) { .mobile-search { display: block; } }
+
+    /* ── CATEGORY TABS (mobile) ── */
+    .cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    @media (min-width: 768px) { .cat-tabs { display: none; } }
+    .tab {
+      flex-shrink: 0; padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: var(--white); cursor: pointer; font-family: var(--font-b); font-size: 0.85rem;
+      font-weight: 600; color: var(--muted); transition: var(--transition); white-space: nowrap;
+    }
+    .tab.active { background: var(--green); color: white; border-color: var(--green); }
+
+    /* ── HERO BANNER ── */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+      border-radius: var(--r-lg); padding: 24px; color: white; position: relative; overflow: hidden;
+    }
+    .hero-banner::after { content: '🌿'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 4rem; opacity: 0.2; }
+    .hero-banner h2 { font-family: var(--font-d); font-size: 1.5rem; margin-bottom: 6px; }
+    .hero-banner p { font-size: 0.88rem; opacity: 0.85; margin-bottom: 16px; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--amber); color: var(--green); border-radius: 20px; padding: 6px 14px; font-size: 0.8rem; font-weight: 700; }
+
+    /* ── PRODUCT GRID ── */
+    .section-header { display: flex; align-items: center; justify-content: space-between; }
+    .section-title { font-family: var(--font-d); font-size: 1.3rem; font-weight: 700; }
+    .see-all { color: var(--green); font-size: 0.85rem; font-weight: 600; text-decoration: none; cursor: pointer; background: none; border: none; }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1200px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+
+    .product-card {
+      background: var(--white); border-radius: var(--r-lg); border: 1.5px solid var(--border);
+      overflow: hidden; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--green-light); }
+    .product-card:focus { outline: 3px solid var(--amber); outline-offset: 2px; }
+    .product-img { height: 110px; display: flex; align-items: center; justify-content: center; font-size: 3rem; background: var(--cream); position: relative; }
+    .stock-badge {
+      position: absolute; top: 8px; right: 8px; border-radius: 20px; padding: 2px 8px;
+      font-size: 0.68rem; font-weight: 700;
+    }
+    .badge-high { background: #e8f5e9; color: #2e7d32; }
+    .badge-med  { background: var(--amber-pale); color: var(--amber-dark); }
+    .badge-low  { background: var(--red-pale); color: var(--red); }
+    .badge-veg  { position: absolute; top: 8px; left: 8px; background: var(--green); color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; font-weight: 700; }
+
+    .product-body { padding: 12px; flex: 1; display: flex; flex-direction: column; }
+    .product-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 3px; line-height: 1.3; }
+    .product-sub  { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+    .allergen-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .allergen-tag { background: var(--cream); border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; font-size: 0.65rem; color: var(--muted); }
+    .allergen-tag.warn { background: var(--red-pale); border-color: var(--red); color: var(--red); }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+    .price { font-family: var(--font-d); font-size: 1.1rem; font-weight: 700; color: var(--green); }
+    .kcal  { font-size: 0.72rem; color: var(--muted); }
+    .add-btn {
+      background: var(--green); color: white; border: none; border-radius: 10px;
+      padding: 8px 12px; cursor: pointer; font-size: 1rem; transition: var(--transition);
+    }
+    .add-btn:hover { background: var(--green-mid); }
+    .add-btn:focus { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+    /* ── RIGHT CART PANEL (desktop) ── */
+    .cart-panel {
+      width: 300px; background: var(--white); border-left: 1px solid var(--border);
+      display: none; flex-direction: column; overflow-y: auto;
+    }
+    @media (min-width: 1200px) { .cart-panel { display: flex; } }
+    .cart-header { padding: 20px; border-bottom: 1px solid var(--border); font-family: var(--font-d); font-size: 1.2rem; font-weight: 700; }
+    .cart-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--muted); padding: 24px; text-align: center; }
+    .cart-empty-icon { font-size: 3rem; }
+    .cart-items { padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .cart-item { display: flex; gap: 10px; align-items: flex-start; }
+    .ci-emoji { font-size: 1.6rem; width: 40px; height: 40px; background: var(--cream); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ci-info { flex: 1; }
+    .ci-name { font-weight: 600; font-size: 0.88rem; }
+    .ci-price { color: var(--green); font-weight: 700; font-size: 0.88rem; }
+    .ci-qty { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border); background: white; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .qty-btn:hover { background: var(--green); color: white; border-color: var(--green); }
+    .qty-num { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
+
+    .cup-choice { margin: 0 16px; background: var(--cream); border-radius: var(--r); padding: 14px; }
+    .cup-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 10px; }
+    .cup-options { display: flex; gap: 8px; }
+    .cup-opt {
+      flex: 1; border: 2px solid var(--border); border-radius: 10px; padding: 10px 6px;
+      text-align: center; cursor: pointer; transition: var(--transition); background: white;
+    }
+    .cup-opt.selected { border-color: var(--green); background: var(--green-pale); }
+    .cup-opt-icon { font-size: 1.4rem; }
+    .cup-opt-label { font-size: 0.72rem; font-weight: 600; margin-top: 4px; }
+    .cup-opt-sub { font-size: 0.65rem; color: var(--muted); }
+
+    .cart-totals { padding: 16px; border-top: 1px solid var(--border); }
+    .total-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; }
+    .total-row.main { font-weight: 800; font-size: 1.05rem; }
+    .pfand-note { background: var(--amber-pale); border-radius: 8px; padding: 8px; font-size: 0.75rem; color: var(--amber-dark); margin-bottom: 12px; }
+    .checkout-btn {
+      width: 100%; background: var(--green); color: white; border: none; border-radius: var(--r);
+      padding: 14px; font-family: var(--font-b); font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: var(--transition);
+    }
+    .checkout-btn:hover { background: var(--green-mid); }
+    .payment-icons { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+    .pay-icon { background: var(--cream); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+
+    /* ── BOTTOM NAV (mobile) ── */
+    .bottom-nav {
+      display: none; position: sticky; bottom: 0; z-index: 100;
+      background: var(--white); border-top: 1.5px solid var(--border);
+      display: flex; padding: 8px 0 env(safe-area-inset-bottom, 8px);
+    }
+    @media (min-width: 768px) { .bottom-nav { display: none !important; } }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 6px 0; cursor: pointer; border: none; background: none;
+      font-family: var(--font-b); font-size: 0.65rem; font-weight: 600; color: var(--muted);
+      transition: var(--transition);
+    }
+    .nav-item.active { color: var(--green); }
+    .nav-icon { font-size: 1.3rem; }
+
+    /* ── MODALS ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500;
+      display: none; align-items: flex-end; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+    @media (min-width: 600px) { .modal-overlay { align-items: center; } }
+    @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+    .modal {
+      background: var(--white); border-radius: var(--r-lg) var(--r-lg) 0 0;
+      width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+      animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    @media (min-width: 600px) { .modal { border-radius: var(--r-lg); max-height: 85vh; } }
+    @keyframes slideUp { from { transform: translateY(40px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; }
+    @media (min-width: 600px) { .modal-handle { display: none; } }
+    .modal-header { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .modal-title { font-family: var(--font-d); font-size: 1.3rem; font-weight: 700; }
+    .modal-close { background: var(--cream); border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .modal-close:hover { background: var(--border); }
+    .modal-body { padding: 24px; }
+
+    /* Product detail modal */
+    .product-hero { height: 160px; background: var(--cream); border-radius: var(--r); display: flex; align-items: center; justify-content: center; font-size: 5rem; margin-bottom: 20px; }
+    .nutrition-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+    .nut-card { background: var(--cream); border-radius: 10px; padding: 10px; text-align: center; }
+    .nut-val  { font-weight: 800; font-size: 1rem; color: var(--green); }
+    .nut-label{ font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .allergen-section { margin: 16px 0; }
+    .allergen-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    .chip-ok  { background: var(--green-pale); color: var(--green); }
+    .chip-warn{ background: var(--red-pale); color: var(--red); }
+    .detail-add-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: var(--r); padding: 16px; font-family: var(--font-b); font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition); margin-top: 20px; }
+    .detail-add-btn:hover { background: var(--green-mid); }
+
+    /* Allergen filter modal */
+    .allergen-list { display: flex; flex-direction: column; gap: 0; }
+    .allergen-row-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .allergen-name { font-weight: 600; }
+    .allergen-desc { font-size: 0.8rem; color: var(--muted); }
+    .toggle { position: relative; width: 46px; height: 26px; cursor: pointer; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track { position: absolute; inset: 0; background: var(--border); border-radius: 13px; transition: var(--transition); }
+    .toggle input:checked + .toggle-track { background: var(--green); }
+    .toggle-thumb { position: absolute; width: 20px; height: 20px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+    /* Accessibility modal */
+    .access-option { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .access-label { font-weight: 600; }
+    .access-desc  { font-size: 0.8rem; color: var(--muted); }
+
+    /* Language modal */
+    .lang-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .lang-btn { padding: 16px; border: 2px solid var(--border); border-radius: var(--r); cursor: pointer; font-family: var(--font-b); font-size: 0.9rem; font-weight: 600; background: white; transition: var(--transition); display: flex; align-items: center; gap: 10px; }
+    .lang-btn.active { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+    .lang-btn:hover  { border-color: var(--green-light); }
+
+    /* Payment modal */
+    .pay-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .pay-method { display: flex; align-items: center; gap: 14px; padding: 16px; border: 2px solid var(--border); border-radius: var(--r); cursor: pointer; transition: var(--transition); background: white; }
+    .pay-method.selected { border-color: var(--green); background: var(--green-pale); }
+    .pay-method-icon { font-size: 1.5rem; width: 40px; text-align: center; }
+    .pay-method-label { font-weight: 700; }
+    .pay-method-sub { font-size: 0.8rem; color: var(--muted); }
+    .pay-confirm-btn { width: 100%; background: var(--amber); color: var(--green); border: none; border-radius: var(--r); padding: 16px; font-family: var(--font-b); font-size: 1rem; font-weight: 800; cursor: pointer; transition: var(--transition); }
+    .pay-confirm-btn:hover { background: var(--amber-dark); color: white; }
+
+    /* Rewards panel */
+    .rewards-card { background: linear-gradient(135deg, var(--green), var(--green-mid)); border-radius: var(--r-lg); padding: 24px; color: white; text-align: center; margin-bottom: 20px; }
+    .rewards-pts { font-family: var(--font-d); font-size: 3rem; font-weight: 900; }
+    .rewards-label { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+    .rewards-bar-wrap { background: rgba(255,255,255,0.2); border-radius: 10px; height: 8px; margin: 16px 0; }
+    .rewards-bar { background: var(--amber); border-radius: 10px; height: 8px; width: 68%; }
+    .rewards-next { font-size: 0.82rem; opacity: 0.85; }
+    .reward-tiers { display: flex; flex-direction: column; gap: 10px; }
+    .reward-tier { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--cream); border-radius: var(--r); }
+    .tier-icon { font-size: 1.6rem; }
+    .tier-label { font-weight: 700; }
+    .tier-desc  { font-size: 0.8rem; color: var(--muted); }
+    .tier-pts   { margin-left: auto; font-weight: 700; color: var(--green); font-size: 0.85rem; }
+
+    /* Notification toast */
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: white; border-radius: 30px; padding: 12px 24px; font-weight: 600; font-size: 0.9rem; z-index: 999; opacity: 0; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; gap: 8px; pointer-events: none; }
+    @media (min-width: 768px) { .toast { bottom: 24px; } }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Audio guidance bar */
+    .audio-bar { background: var(--green); color: white; padding: 10px 16px; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+    .audio-bar button { background: var(--amber); border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: 700; font-size: 0.8rem; color: var(--green); }
+
+    /* Utilities */
+    .flex-1 { flex: 1; }
+    .hidden { display: none !important; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+    .label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px; }
+    .mt-8  { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .text-green { color: var(--green); }
+    .fw-700 { font-weight: 700; }
+  </style>
+</head>
+<body role="application" aria-label="KochBox Bestellsystem">
+
+  <a href="#main-content" class="skip-link">Zum Inhalt springen / Skip to content</a>
+
+  <!-- Audio guidance bar (hidden by default) -->
+  <div class="audio-bar hidden" id="audioBar" role="alert" aria-live="polite">
+    🔊 <span id="audioText">Audio-Führung aktiv. Tippen Sie auf ein Produkt für Details.</span>
+    <button onclick="toggleAudio()">Aus</button>
+  </div>
+
+  <!-- HEADER -->
+  <header role="banner">
+    <a href="#" class="logo" aria-label="KochBox Startseite">
+      <div class="logo-icon" aria-hidden="true">🌿</div>
+      KochBox
+    </a>
+    <div class="header-actions">
+      <div class="points-badge" role="status" aria-label="247 Treuepunkte">
+        ⭐ <span id="pointsCount">247</span>
+      </div>
+      <button class="hbtn" onclick="openModal('langModal')" aria-label="Sprache wechseln" title="Sprache / Language">
+        🌐 <span id="langLabel">DE</span>
+      </button>
+      <button class="hbtn" onclick="openModal('accessModal')" aria-label="Barrierefreiheit Einstellungen">
+        ♿
+      </button>
+      <button class="hbtn cart-btn" onclick="openModal('cartModal')" aria-label="Warenkorb öffnen, 2 Artikel">
+        🛒
+        <span class="cart-count" id="cartCount" aria-hidden="true">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- APP LAYOUT -->
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" aria-label="Kategorien">
+      <div class="sidebar-search">
+        <input class="search-input" type="search" placeholder="Suchen… / Search…" aria-label="Produkte suchen" id="searchInput" oninput="filterProducts()">
+      </div>
+      <div class="sidebar-section" aria-hidden="true">Kategorien</div>
+      <div role="list">
+        <button class="cat-btn active" role="listitem" onclick="setCategory('all', this)">
+          <span class="cat-icon" aria-hidden="true">🍽️</span> <span data-de="Alle" data-en="All">Alle</span>
+          <span class="cat-count">12</span>
+        </button>
+        <button class="cat-btn" role="listitem" onclick="setCategory('warm', this)">
+          <span class="cat-icon" aria-hidden="true">🍲</span> <span data-de="Warme Speisen" data-en="Hot Meals">Warme Speisen</span>
+          <span class="cat-count">5</span>
+        </button>
+        <button class="cat-btn" role="listitem" onclick="setCategory('salad', this)">
+          <span class="cat-icon" aria-hidden="true">🥗</span> <span data-de="Salate" data-en="Salads">Salate</span>
+          <span class="cat-count">2</span>
+        </button>
+        <button class="cat-btn" role="listitem" onclick="setCategory('drink', this)">
+          <span class="cat-icon" aria-hidden="true">🥤</span> <span data-de="Getränke" data-en="Drinks">Getränke</span>
+          <span class="cat-count">3</span>
+        </button>
+        <button class="cat-btn" role="listitem" onclick="setCategory('snack', this)">
+          <span class="cat-icon" aria-hidden="true">🥐</span> <span data-de="Snacks" data-en="Snacks">Snacks</span>
+          <span class="cat-count">1</span>
+        </button>
+        <button class="cat-btn" role="listitem" onclick="setCategory('breakfast', this)">
+          <span class="cat-icon" aria-hidden="true">🥣</span> <span data-de="Frühstück" data-en="Breakfast">Frühstück</span>
+          <span class="cat-count">1</span>
+        </button>
+      </div>
+      <button class="allergen-filter-btn" onclick="openModal('allergenModal')" aria-label="Allergenfilter öffnen">
+        ⚠️ <span data-de="Allergenfilter" data-en="Allergen Filter">Allergenfilter</span>
+      </button>
+      <div class="stock-indicator" role="status" aria-label="Lagerbestand">
+        <div class="label" data-de="Lagerbestand" data-en="Stock Level">Lagerbestand</div>
+        <div class="stock-row"><span><span class="stock-dot stock-high"></span> <span data-de="Hoch (>10)" data-en="High (>10)">Hoch (>10)</span></span> <span>8 Artikel</span></div>
+        <div class="stock-row"><span><span class="stock-dot stock-med"></span> <span data-de="Mittel (5–10)" data-en="Medium (5–10)">Mittel (5–10)</span></span> <span>3 Artikel</span></div>
+        <div class="stock-row"><span><span class="stock-dot stock-low"></span> <span data-de="Niedrig (<5)" data-en="Low (<5)">Niedrig (<5)</span></span> <span>1 Artikel</span></div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="main-content" tabindex="-1">
+
+      <!-- Mobile search -->
+      <div class="mobile-search">
+        <input class="search-input" type="search" placeholder="Suchen… / Search…" style="width:100%" aria-label="Produkte suchen" oninput="filterProducts()">
+      </div>
+
+      <!-- Mobile category tabs -->
+      <div class="cat-tabs" role="tablist" aria-label="Kategorien">
+        <button class="tab active" role="tab" aria-selected="true" onclick="setCategory('all', this)">🍽️ Alle</button>
+        <button class="tab" role="tab" onclick="setCategory('warm', this)">🍲 Warm</button>
+        <button class="tab" role="tab" onclick="setCategory('salad', this)">🥗 Salat</button>
+        <button class="tab" role="tab" onclick="setCategory('drink', this)">🥤 Drinks</button>
+        <button class="tab" role="tab" onclick="setCategory('snack', this)">🥐 Snacks</button>
+        <button class="tab" role="tab" onclick="setCategory('breakfast', this)">🥣 Frühstück</button>
+      </div>
+
+      <!-- Hero Banner -->
+      <div class="hero-banner" role="region" aria-label="Tagesangebot">
+        <h2 data-de="Mittagszeit! 🌞" data-en="Lunchtime! 🌞">Mittagszeit! 🌞</h2>
+        <p data-de="Frisch zubereitet & für Sie warmgehalten" data-en="Freshly prepared & kept warm for you">Frisch zubereitet & für Sie warmgehalten</p>
+        <div class="hero-tag">🔥 <span data-de="Heute: Linsensuppe ab 3,90 €" data-en="Today: Lentil Soup from €3.90">Heute: Linsensuppe ab 3,90 €</span></div>
+      </div>
+
+      <!-- Product Grid -->
+      <div>
+        <div class="section-header">
+          <h2 class="section-title" data-de="Unsere Auswahl" data-en="Our Selection">Unsere Auswahl</h2>
+          <button class="see-all" onclick="openModal('allergenModal')" aria-label="Allergenfilter öffnen">⚠️ <span data-de="Allergene" data-en="Allergens">Allergene</span></button>
+        </div>
+        <div class="product-grid mt-8" id="productGrid" role="list" aria-label="Produkte">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </main>
+
+    <!-- DESKTOP CART PANEL -->
+    <aside class="cart-panel" aria-label="Warenkorb">
+      <div class="cart-header">🛒 <span data-de="Mein Warenkorb" data-en="My Cart">Mein Warenkorb</span></div>
+      <div class="cart-empty" id="cartEmpty">
+        <div class="cart-empty-icon">🛒</div>
+        <p data-de="Noch nichts im Warenkorb" data-en="Nothing in cart yet">Noch nichts im Warenkorb</p>
+        <small data-de="Fügen Sie leckere Gerichte hinzu!" data-en="Add some delicious meals!">Fügen Sie leckere Gerichte hinzu!</small>
+      </div>
+      <div class="cart-items hidden" id="cartItemsList"></div>
+      <div class="cup-choice hidden" id="cupChoice">
+        <div class="cup-title" data-de="☕ Becherauswahl" data-en="☕ Cup Choice">☕ Becherauswahl</div>
+        <div class="cup-options">
+          <div class="cup-opt selected" onclick="selectCup('reusable', this)" tabindex="0" role="radio" aria-checked="true" aria-label="Mehrwegbecher mit Pfand">
+            <div class="cup-opt-icon">♻️</div>
+            <div class="cup-opt-label" data-de="Mehrweg" data-en="Reusable">Mehrweg</div>
+            <div class="cup-opt-sub" data-de="+1,00 € Pfand" data-en="+€1.00 deposit">+1,00 € Pfand</div>
+          </div>
+          <div class="cup-opt" onclick="selectCup('single', this)" tabindex="0" role="radio" aria-checked="false" aria-label="Einwegbecher">
+            <div class="cup-opt-icon">🥤</div>
+            <div class="cup-opt-label" data-de="Einweg" data-en="Single-use">Einweg</div>
+            <div class="cup-opt-sub" data-de="kein Pfand" data-en="no deposit">kein Pfand</div>
+          </div>
+        </div>
+      </div>
+      <div class="cart-totals hidden" id="cartTotals">
+        <div class="total-row"><span data-de="Zwischensumme" data-en="Subtotal">Zwischensumme</span><span id="subtotal">0,00 €</span></div>
+        <div class="total-row"><span data-de="Pfand" data-en="Deposit">Pfand</span><span id="pfandAmt">1,00 €</span></div>
+        <div class="pfand-note" data-de="♻️ Pfand wird zurückerstattet wenn Sie den Becher zurückgeben" data-en="♻️ Deposit refunded when you return the cup">♻️ Pfand wird zurückerstattet wenn Sie den Becher zurückgeben</div>
+        <div class="total-row main"><strong data-de="Gesamt" data-en="Total">Gesamt</strong><strong id="totalAmt">0,00 €</strong></div>
+        <button class="checkout-btn" onclick="openModal('payModal')" aria-label="Zur Kasse">
+          <span data-de="Zur Kasse →" data-en="Checkout →">Zur Kasse →</span>
+        </button>
+        <div class="payment-icons" aria-label="Akzeptierte Zahlungsmethoden">
+          <span class="pay-icon">💳</span>
+          <span class="pay-icon">💶</span>
+          <span class="pay-icon">📱</span>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /.app-layout -->
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav" aria-label="Navigation">
+    <button class="nav-item active" onclick="scrollTop()" aria-label="Startseite">
+      <span class="nav-icon" aria-hidden="true">🏠</span>
+      <span data-de="Start" data-en="Home">Start</span>
+    </button>
+    <button class="nav-item" onclick="openModal('allergenModal')" aria-label="Menü & Allergenfilter">
+      <span class="nav-icon" aria-hidden="true">🍽️</span>
+      <span data-de="Menü" data-en="Menu">Menü</span>
+    </button>
+    <button class="nav-item" onclick="openModal('cartModal')" aria-label="Warenkorb">
+      <span class="nav-icon" aria-hidden="true">🛒</span>
+      <span data-de="Warenkorb" data-en="Cart">Warenkorb</span>
+    </button>
+    <button class="nav-item" onclick="openModal('rewardsModal')" aria-label="Treuepunkte">
+      <span class="nav-icon" aria-hidden="true">🏆</span>
+      <span data-de="Punkte" data-en="Rewards">Punkte</span>
+    </button>
+    <button class="nav-item" onclick="openModal('accessModal')" aria-label="Profil & Einstellungen">
+      <span class="nav-icon" aria-hidden="true">👤</span>
+      <span data-de="Profil" data-en="Profile">Profil</span>
+    </button>
+  </nav>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ═══════════ MODALS ═══════════ -->
+
+  <!-- Product Detail -->
+  <div class="modal-overlay" id="productModal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" onclick="closeOnOverlay(event, 'productModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title" id="productModalTitle">Produktdetails</h2>
+        <button class="modal-close" onclick="closeModal('productModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body" id="productModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Cart (mobile) -->
+  <div class="modal-overlay" id="cartModal" role="dialog" aria-modal="true" aria-label="Warenkorb" onclick="closeOnOverlay(event, 'cartModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">🛒 <span data-de="Warenkorb" data-en="Cart">Warenkorb</span></h2>
+        <button class="modal-close" onclick="closeModal('cartModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body" id="cartModalBody">
+        <div id="cartModalEmpty" style="text-align:center;padding:32px 0;color:var(--muted)">
+          <div style="font-size:3rem">🛒</div>
+          <p data-de="Noch nichts im Warenkorb" data-en="Nothing in cart yet">Noch nichts im Warenkorb</p>
+        </div>
+        <div id="cartModalItems" class="hidden"></div>
+        <div id="cartModalCup" class="cup-choice hidden" style="margin:0 0 16px">
+          <div class="cup-title">☕ <span data-de="Becherauswahl" data-en="Cup Choice">Becherauswahl</span></div>
+          <div class="cup-options">
+            <div class="cup-opt selected" onclick="selectCup('reusable', this)" tabindex="0">
+              <div class="cup-opt-icon">♻️</div>
+              <div class="cup-opt-label" data-de="Mehrweg" data-en="Reusable">Mehrweg</div>
+              <div class="cup-opt-sub">+1,00 € Pfand</div>
+            </div>
+            <div class="cup-opt" onclick="selectCup('single', this)" tabindex="0">
+              <div class="cup-opt-icon">🥤</div>
+              <div class="cup-opt-label" data-de="Einweg" data-en="Single-use">Einweg</div>
+              <div class="cup-opt-sub" data-de="kein Pfand" data-en="no deposit">kein Pfand</div>
+            </div>
+          </div>
+        </div>
+        <div id="cartModalTotals" class="hidden">
+          <div class="cart-totals" style="padding:0">
+            <div class="total-row"><span>Zwischensumme</span><span id="m-subtotal">0,00 €</span></div>
+            <div class="total-row"><span>Pfand</span><span id="m-pfand">1,00 €</span></div>
+            <div class="pfand-note">♻️ Pfand wird zurückerstattet wenn Sie den Becher zurückgeben</div>
+            <div class="total-row main"><strong>Gesamt</strong><strong id="m-total">0,00 €</strong></div>
+            <button class="checkout-btn" onclick="closeModal('cartModal'); openModal('payModal')">Zur Kasse →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Allergen Filter -->
+  <div class="modal-overlay" id="allergenModal" role="dialog" aria-modal="true" aria-label="Allergenfilter" onclick="closeOnOverlay(event, 'allergenModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">⚠️ <span data-de="Allergenfilter" data-en="Allergen Filter">Allergenfilter</span></h2>
+        <button class="modal-close" onclick="closeModal('allergenModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px" data-de="Aktivieren Sie Allergene die Sie vermeiden möchten. Produkte werden entsprechend gefiltert." data-en="Enable allergens you want to avoid. Products will be filtered accordingly.">Aktivieren Sie Allergene die Sie vermeiden möchten.</p>
+        <div class="allergen-list" role="group" aria-label="Allergen Einstellungen">
+          <div class="allergen-row-item">
+            <div><div class="allergen-name">🌾 <span data-de="Gluten" data-en="Gluten">Gluten</span></div><div class="allergen-desc" data-de="Weizen, Gerste, Roggen" data-en="Wheat, barley, rye">Weizen, Gerste, Roggen</div></div>
+            <label class="toggle" aria-label="Gluten filtern"><input type="checkbox" id="filterGluten"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="allergen-row-item">
+            <div><div class="allergen-name">🥛 <span data-de="Laktose" data-en="Lactose">Laktose</span></div><div class="allergen-desc" data-de="Milch und Milchprodukte" data-en="Milk and dairy products">Milch und Milchprodukte</div></div>
+            <label class="toggle" aria-label="Laktose filtern"><input type="checkbox" id="filterLactose"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="allergen-row-item">
+            <div><div class="allergen-name">🥜 <span data-de="Nüsse" data-en="Nuts">Nüsse</span></div><div class="allergen-desc" data-de="Alle Baumnüsse und Erdnüsse" data-en="All tree nuts and peanuts">Alle Baumnüsse und Erdnüsse</div></div>
+            <label class="toggle" aria-label="Nüsse filtern"><input type="checkbox" id="filterNuts"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="allergen-row-item">
+            <div><div class="allergen-name">🥚 <span data-de="Eier" data-en="Eggs">Eier</span></div><div class="allergen-desc" data-de="Eier und Eiprodukte" data-en="Eggs and egg products">Eier und Eiprodukte</div></div>
+            <label class="toggle" aria-label="Eier filtern"><input type="checkbox" id="filterEggs"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="allergen-row-item">
+            <div><div class="allergen-name">🐟 <span data-de="Fisch" data-en="Fish">Fisch</span></div><div class="allergen-desc">Alle Fischarten</div></div>
+            <label class="toggle" aria-label="Fisch filtern"><input type="checkbox" id="filterFish"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="allergen-row-item">
+            <div><div class="allergen-name">🌱 <span data-de="Nur Vegan" data-en="Vegan Only">Nur Vegan</span></div><div class="allergen-desc" data-de="Zeigt nur vegane Produkte" data-en="Shows only vegan products">Zeigt nur vegane Produkte</div></div>
+            <label class="toggle" aria-label="Nur vegane Produkte"><input type="checkbox" id="filterVegan"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accessibility -->
+  <div class="modal-overlay" id="accessModal" role="dialog" aria-modal="true" aria-label="Barrierefreiheit" onclick="closeOnOverlay(event, 'accessModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">♿ <span data-de="Barrierefreiheit" data-en="Accessibility">Barrierefreiheit</span></h2>
+        <button class="modal-close" onclick="closeModal('accessModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="access-option">
+          <div><div class="access-label" data-de="Hoher Kontrast" data-en="High Contrast">Hoher Kontrast</div><div class="access-desc" data-de="Verstärkte Farben für bessere Sichtbarkeit" data-en="Enhanced colors for better visibility">Verstärkte Farben für bessere Sichtbarkeit</div></div>
+          <label class="toggle" aria-label="Hoher Kontrast umschalten"><input type="checkbox" id="toggleHC" onchange="toggleHighContrast(this)"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+        </div>
+        <div class="access-option">
+          <div><div class="access-label" data-de="Große Schrift" data-en="Large Text">Große Schrift</div><div class="access-desc" data-de="Schriftgröße auf 120% erhöhen" data-en="Increase font size to 120%">Schriftgröße auf 120% erhöhen</div></div>
+          <label class="toggle" aria-label="Große Schrift umschalten"><input type="checkbox" id="toggleLarge" onchange="toggleLargeText(this)"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+        </div>
+        <div class="access-option">
+          <div><div class="access-label" data-de="Audio-Führung" data-en="Audio Guidance">Audio-Führung</div><div class="access-desc" data-de="Sprachausgabe für Navigation aktivieren" data-en="Enable voice output for navigation">Sprachausgabe für Navigation aktivieren</div></div>
+          <label class="toggle" aria-label="Audio-Führung umschalten"><input type="checkbox" id="toggleAudio" onchange="toggleAudio()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+        </div>
+        <div class="access-option">
+          <div><div class="access-label" data-de="Screenreader-Modus" data-en="Screen Reader Mode">Screenreader-Modus</div><div class="access-desc" data-de="Optimiert für Screenreader (ARIA verstärkt)" data-en="Optimized for screen readers (enhanced ARIA)">Optimiert für Screenreader</div></div>
+          <label class="toggle" aria-label="Screenreader-Modus"><input type="checkbox" id="toggleSR"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+        </div>
+        <hr>
+        <p style="color:var(--muted);font-size:0.8rem;line-height:1.5" data-de="KochBox ist nach WCAG 2.1 AA gestaltet. Für Unterstützung: accessibility@kochbox.de" data-en="KochBox is designed to WCAG 2.1 AA. For support: accessibility@kochbox.de">KochBox ist nach WCAG 2.1 AA gestaltet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language -->
+  <div class="modal-overlay" id="langModal" role="dialog" aria-modal="true" aria-label="Sprache wählen" onclick="closeOnOverlay(event, 'langModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">🌐 <span data-de="Sprache" data-en="Language">Sprache</span></h2>
+        <button class="modal-close" onclick="closeModal('langModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="lang-options" role="radiogroup" aria-label="Sprachauswahl">
+          <button class="lang-btn active" id="langDE" onclick="setLang('de')" role="radio" aria-checked="true">🇩🇪 Deutsch</button>
+          <button class="lang-btn" id="langEN" onclick="setLang('en')" role="radio" aria-checked="false">🇬🇧 English</button>
+          <button class="lang-btn" onclick="showToast('Bald verfügbar / Coming soon')" role="radio" aria-checked="false">🇹🇷 Türkçe</button>
+          <button class="lang-btn" onclick="showToast('Bald verfügbar / Coming soon')" role="radio" aria-checked="false">🇦🇷 Español</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div class="modal-overlay" id="payModal" role="dialog" aria-modal="true" aria-label="Zahlungsauswahl" onclick="closeOnOverlay(event, 'payModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">💳 <span data-de="Zahlung" data-en="Payment">Zahlung</span></h2>
+        <button class="modal-close" onclick="closeModal('payModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="pay-methods" role="radiogroup" aria-label="Zahlungsmethode wählen">
+          <div class="pay-method selected" onclick="selectPayMethod(this)" tabindex="0" role="radio" aria-checked="true">
+            <div class="pay-method-icon">💳</div>
+            <div><div class="pay-method-label" data-de="Karte / Contactless" data-en="Card / Contactless">Karte / Kontaktlos</div><div class="pay-method-sub" data-de="Girocard, Mastercard, Visa" data-en="Girocard, Mastercard, Visa">Girocard, Mastercard, Visa</div></div>
+          </div>
+          <div class="pay-method" onclick="selectPayMethod(this)" tabindex="0" role="radio" aria-checked="false">
+            <div class="pay-method-icon">📱</div>
+            <div><div class="pay-method-label">Apple Pay / Google Pay</div><div class="pay-method-sub" data-de="NFC Zahlung" data-en="NFC payment">NFC Zahlung</div></div>
+          </div>
+          <div class="pay-method" onclick="selectPayMethod(this)" tabindex="0" role="radio" aria-checked="false">
+            <div class="pay-method-icon">💶</div>
+            <div><div class="pay-method-label" data-de="Bargeld" data-en="Cash">Bargeld</div><div class="pay-method-sub" data-de="Münzen und Scheine akzeptiert" data-en="Coins and notes accepted">Münzen und Scheine akzeptiert</div></div>
+          </div>
+          <div class="pay-method" onclick="selectPayMethod(this)" tabindex="0" role="radio" aria-checked="false">
+            <div class="pay-method-icon">🎓</div>
+            <div><div class="pay-method-label">THI Studentencard</div><div class="pay-method-sub" data-de="Hochschule Ingolstadt" data-en="Ingolstadt University">Hochschule Ingolstadt</div></div>
+          </div>
+        </div>
+        <button class="pay-confirm-btn" onclick="confirmPayment()" aria-label="Zahlung bestätigen">
+          ✅ <span data-de="Jetzt bezahlen" data-en="Pay Now">Jetzt bezahlen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rewards -->
+  <div class="modal-overlay" id="rewardsModal" role="dialog" aria-modal="true" aria-label="Treueprogramm" onclick="closeOnOverlay(event, 'rewardsModal')">
+    <div class="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 <span data-de="Meine Punkte" data-en="My Rewards">Meine Punkte</span></h2>
+        <button class="modal-close" onclick="closeModal('rewardsModal')" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="rewards-card" role="status" aria-label="247 Treuepunkte">
+          <div class="rewards-pts" id="rewardsPts">247</div>
+          <div class="rewards-label" data-de="KochBox Punkte" data-en="KochBox Points">KochBox Punkte</div>
+          <div class="rewards-bar-wrap" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" aria-label="68% bis zum nächsten Reward">
+            <div class="rewards-bar"></div>
+          </div>
+          <div class="rewards-next" data-de="Noch 53 Punkte bis zur nächsten Prämie!" data-en="53 more points until your next reward!">Noch 53 Punkte bis zur nächsten Prämie!</div>
+        </div>
+        <div class="label" data-de="Prämien" data-en="Rewards">Prämien</div>
+        <div class="reward-tiers">
+          <div class="reward-tier">
+            <div class="tier-icon">☕</div>
+            <div><div class="tier-label" data-de="Gratis Getränk" data-en="Free Drink">Gratis Getränk</div><div class="tier-desc" data-de="Jedes 5. Getränk kostenlos" data-en="Every 5th drink free">Jedes 5. Getränk kostenlos</div></div>
+            <div class="tier-pts">300 Pts</div>
+          </div>
+          <div class="reward-tier">
+            <div class="tier-icon">🍲</div>
+            <div><div class="tier-label" data-de="Gratis Mahlzeit" data-en="Free Meal">Gratis Mahlzeit</div><div class="tier-desc" data-de="Jede 10. Mahlzeit kostenlos" data-en="Every 10th meal free">Jede 10. Mahlzeit kostenlos</div></div>
+            <div class="tier-pts">500 Pts</div>
+          </div>
+          <div class="reward-tier">
+            <div class="tier-icon">♻️</div>
+            <div><div class="tier-label" data-de="Öko-Bonus" data-en="Eco Bonus">Öko-Bonus</div><div class="tier-desc" data-de="+10 Punkte pro Mehrwegbecher" data-en="+10 points per reusable cup">+10 Punkte pro Mehrwegbecher</div></div>
+            <div class="tier-pts">+10/Becher</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ── DATA ── */
+const products = [
+  { id:1, emoji:'🍲', nameDE:'Linsensuppe', nameEN:'Lentil Soup', subDE:'Hausgemacht, 500ml', subEN:'Homemade, 500ml', price:3.90, kcal:320, cat:'warm', veg:true, vegan:true, gluten:false, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'14g', fat:'6g', carbs:'48g' },
+  { id:2, emoji:'🍛', nameDE:'Gemüsecurry & Reis', nameEN:'Veg Curry & Rice', subDE:'Mit Basmati, 450g', subEN:'With basmati, 450g', price:5.90, kcal:480, cat:'warm', veg:true, vegan:true, gluten:false, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'12g', fat:'10g', carbs:'72g' },
+  { id:3, emoji:'🌯', nameDE:'Hähnchen-Wrap', nameEN:'Chicken Wrap', subDE:'Mit Salat & Joghurt', subEN:'With salad & yoghurt', price:5.50, kcal:520, cat:'snack', veg:false, vegan:false, gluten:true, lactose:true, nuts:false, eggs:false, fish:false, stock:'med', protein:'32g', fat:'14g', carbs:'52g' },
+  { id:4, emoji:'🥗', nameDE:'Griechischer Salat', nameEN:'Greek Salad', subDE:'Mit Feta & Oliven', subEN:'With feta & olives', price:4.80, kcal:290, cat:'salad', veg:true, vegan:false, gluten:false, lactose:true, nuts:false, eggs:false, fish:false, stock:'high', protein:'8g', fat:'18g', carbs:'12g' },
+  { id:5, emoji:'🥣', nameDE:'Overnight Oats', nameEN:'Overnight Oats', subDE:'Mit Beeren & Chiasamen', subEN:'With berries & chia', price:3.50, kcal:380, cat:'breakfast', veg:true, vegan:true, gluten:true, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'10g', fat:'8g', carbs:'58g' },
+  { id:6, emoji:'🥑', nameDE:'Avocado-Toast', nameEN:'Avocado Toast', subDE:'Sauerteig, Limettenquark', subEN:'Sourdough, lime quark', price:4.20, kcal:430, cat:'snack', veg:true, vegan:false, gluten:true, lactose:true, nuts:false, eggs:false, fish:false, stock:'med', protein:'14g', fat:'22g', carbs:'42g' },
+  { id:7, emoji:'🍅', nameDE:'Tomatensuppe', nameEN:'Tomato Soup', subDE:'Bio-Tomaten, 400ml', subEN:'Organic tomatoes, 400ml', price:3.90, kcal:210, cat:'warm', veg:true, vegan:true, gluten:false, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'4g', fat:'6g', carbs:'30g' },
+  { id:8, emoji:'🥙', nameDE:'Quinoa Bowl', nameEN:'Quinoa Bowl', subDE:'Mit Gemüse & Tahini', subEN:'With veggies & tahini', price:6.20, kcal:510, cat:'salad', veg:true, vegan:true, gluten:false, lactose:false, nuts:true, eggs:false, fish:false, stock:'low', protein:'18g', fat:'16g', carbs:'62g' },
+  { id:9, emoji:'🧆', nameDE:'Falafel-Box', nameEN:'Falafel Box', subDE:'5 Stück mit Hummus', subEN:'5 pieces with hummus', price:5.20, kcal:460, cat:'warm', veg:true, vegan:true, gluten:true, lactose:false, nuts:true, eggs:false, fish:false, stock:'high', protein:'16g', fat:'20g', carbs:'52g' },
+  { id:10, emoji:'🥬', nameDE:'Grüner Smoothie', nameEN:'Green Smoothie', subDE:'Spinat, Apfel, Ingwer', subEN:'Spinach, apple, ginger', price:3.80, kcal:180, cat:'drink', veg:true, vegan:true, gluten:false, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'3g', fat:'1g', carbs:'38g' },
+  { id:11, emoji:'☕', nameDE:'Hafer-Cappuccino', nameEN:'Oat Cappuccino', subDE:'Bio Hafermilch, 250ml', subEN:'Organic oat milk, 250ml', price:2.90, kcal:120, cat:'drink', veg:true, vegan:true, gluten:true, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'2g', fat:'4g', carbs:'18g' },
+  { id:12, emoji:'🍵', nameDE:'Grüner Tee', nameEN:'Green Tea', subDE:'Bio, 300ml, heiß', subEN:'Organic, 300ml, hot', price:2.20, kcal:5, cat:'drink', veg:true, vegan:true, gluten:false, lactose:false, nuts:false, eggs:false, fish:false, stock:'high', protein:'0g', fat:'0g', carbs:'1g' },
+];
+
+/* ── STATE ── */
+let cart = [];
+let currentLang = 'de';
+let currentCategory = 'all';
+let cupType = 'reusable';
+let searchTerm = '';
+
+/* ── LANGUAGE ── */
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('langLabel').textContent = lang.toUpperCase();
+  document.querySelectorAll('[data-de]').forEach(el => {
+    el.textContent = lang === 'de' ? el.dataset.de : el.dataset.en;
+  });
+  document.getElementById('langDE').classList.toggle('active', lang === 'de');
+  document.getElementById('langEN').classList.toggle('active', lang === 'en');
+  renderProducts();
+  closeModal('langModal');
+  showToast(lang === 'de' ? '🇩🇪 Deutsch ausgewählt' : '🇬🇧 English selected');
+}
+
+/* ── CATEGORY ── */
+function setCategory(cat, btn) {
+  currentCategory = cat;
+  // sidebar buttons
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  // mobile tabs
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderProducts();
+}
+
+/* ── SEARCH ── */
+function filterProducts() {
+  const inputs = document.querySelectorAll('[type=search]');
+  inputs.forEach(i => { searchTerm = i.value.toLowerCase(); });
+  renderProducts();
+}
+
+/* ── ALLERGEN FILTERS ── */
+function activeFilters() {
+  const f = {};
+  ['Gluten','Lactose','Nuts','Eggs','Fish','Vegan'].forEach(k => {
+    f[k.toLowerCase()] = document.getElementById('filter'+k)?.checked;
+  });
+  return f;
+}
+
+/* ── RENDER PRODUCTS ── */
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  const f = activeFilters();
+  let visible = products.filter(p => {
+    if(currentCategory !== 'all' && p.cat !== currentCategory) return false;
+    if(searchTerm && !p.nameDE.toLowerCase().includes(searchTerm) && !p.nameEN.toLowerCase().includes(searchTerm)) return false;
+    if(f.gluten   && p.gluten)   return false;
+    if(f.lactose  && p.lactose)  return false;
+    if(f.nuts     && p.nuts)     return false;
+    if(f.eggs     && p.eggs)     return false;
+    if(f.fish     && p.fish)     return false;
+    if(f.vegan    && !p.vegan)   return false;
+    return true;
+  });
+  grid.innerHTML = visible.map(p => productCard(p)).join('');
+}
+
+function productCard(p) {
+  const name  = currentLang === 'de' ? p.nameDE : p.nameEN;
+  const sub   = currentLang === 'de' ? p.subDE  : p.subEN;
+  const badge = p.stock === 'high' ? ['badge-high','Verfügbar'] : p.stock === 'med' ? ['badge-med','Wenig'] : ['badge-low','Letzte!'];
+  const allergens = [
+    p.gluten  ? ['warn','Gluten']   : ['ok','Glutenfrei'],
+    p.lactose ? ['warn','Laktose']  : null,
+    p.nuts    ? ['warn','Nüsse']    : null,
+    p.fish    ? ['warn','Fisch']    : null,
+  ].filter(Boolean);
+  return `
+  <article class="product-card" role="listitem" tabindex="0"
+    onclick="openProductDetail(${p.id})"
+    onkeydown="if(event.key==='Enter'||event.key===' ')openProductDetail(${p.id})"
+    aria-label="${name}, ${p.price.toFixed(2).replace('.',',')} Euro, ${p.kcal} Kilokalorien">
+    <div class="product-img">
+      <span aria-hidden="true" style="font-size:3rem">${p.emoji}</span>
+      <span class="stock-badge ${badge[0]}" aria-hidden="true">${badge[1]}</span>
+      ${p.veg ? '<span class="badge-veg" aria-hidden="true">🌱</span>' : ''}
+    </div>
+    <div class="product-body">
+      <div class="product-name">${name}</div>
+      <div class="product-sub">${sub}</div>
+      <div class="allergen-row">
+        ${allergens.map(a => `<span class="allergen-tag ${a[0]==='warn'?'warn':''}">${a[1]}</span>`).join('')}
+      </div>
+      <div class="product-footer">
+        <div>
+          <div class="price">${p.price.toFixed(2).replace('.',',')} €</div>
+          <div class="kcal">${p.kcal} kcal</div>
+        </div>
+        <button class="add-btn" onclick="event.stopPropagation();addToCart(${p.id})" aria-label="${name} zum Warenkorb hinzufügen">+</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ── PRODUCT DETAIL ── */
+function openProductDetail(id) {
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  const name = currentLang === 'de' ? p.nameDE : p.nameEN;
+  document.getElementById('productModalTitle').textContent = name;
+  const allergenList = [
+    {name:'Gluten', has:p.gluten}, {name:'Laktose', has:p.lactose},
+    {name:'Nüsse', has:p.nuts}, {name:'Eier', has:p.eggs}, {name:'Fisch', has:p.fish}
+  ];
+  document.getElementById('productModalBody').innerHTML = `
+    <div class="product-hero" aria-hidden="true">${p.emoji}</div>
+    <h3 style="font-family:var(--font-d);font-size:1.4rem;margin-bottom:4px">${name}</h3>
+    <p style="color:var(--muted);margin-bottom:12px">${currentLang==='de'?p.subDE:p.subEN}</p>
+    <div class="nutrition-grid" role="group" aria-label="Nährwerte">
+      <div class="nut-card"><div class="nut-val">${p.kcal}</div><div class="nut-label">kcal</div></div>
+      <div class="nut-card"><div class="nut-val">${p.protein}</div><div class="nut-label">Protein</div></div>
+      <div class="nut-card"><div class="nut-val">${p.carbs}</div><div class="nut-label">Kohlenh.</div></div>
+      <div class="nut-card"><div class="nut-val">${p.fat}</div><div class="nut-label">Fett</div></div>
+    </div>
+    <div class="allergen-section">
+      <div class="label">Allergene & Eigenschaften</div>
+      <div class="allergen-chips">
+        ${p.vegan ? '<span class="chip chip-ok">🌱 Vegan</span>' : p.veg ? '<span class="chip chip-ok">🥦 Vegetarisch</span>' : ''}
+        ${allergenList.map(a => `<span class="chip ${a.has?'chip-warn':'chip-ok'}">${a.has?'⚠️':'✓'} ${a.name}${a.has?'':' frei'}</span>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--cream);border-radius:var(--r);padding:12px 16px">
+      <span style="font-family:var(--font-d);font-size:1.5rem;font-weight:900;color:var(--green)">${p.price.toFixed(2).replace('.',',')} €</span>
+      <span style="color:var(--muted);font-size:0.85rem">${currentLang==='de'?'inkl. MwSt.':'incl. VAT'}</span>
+    </div>
+    <button class="detail-add-btn" onclick="addToCart(${p.id});closeModal('productModal')" aria-label="${name} zum Warenkorb hinzufügen">
+      + ${currentLang==='de'?'In den Warenkorb':'Add to Cart'}
+    </button>`;
+  openModal('productModal');
+  if(document.getElementById('audioBar').classList.contains('show') || !document.getElementById('audioBar').classList.contains('hidden')) {
+    speakText(`${name}. ${p.kcal} Kilokalorien. ${p.price.toFixed(2)} Euro.`);
+  }
+}
+
+/* ── CART ── */
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  const existing = cart.find(x => x.id === id);
+  if(existing) existing.qty++;
+  else cart.push({...p, qty:1});
+  updateCartUI();
+  const name = currentLang === 'de' ? p.nameDE : p.nameEN;
+  showToast(`✅ ${name} ${currentLang==='de'?'hinzugefügt':'added'}`);
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  const pfand = cupType === 'reusable' ? 1.00 : 0;
+  const grandTotal = total + pfand;
+  const count = cart.reduce((s,x) => s+x.qty, 0);
+
+  document.getElementById('cartCount').textContent = count;
+
+  const itemsHtml = cart.map(item => {
+    const name = currentLang==='de' ? item.nameDE : item.nameEN;
+    return `<div class="cart-item">
+      <div class="ci-emoji">${item.emoji}</div>
+      <div class="ci-info">
+        <div class="ci-name">${name}</div>
+        <div class="ci-price">${(item.price*item.qty).toFixed(2).replace('.',',')} €</div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${item.id},-1)" aria-label="Weniger">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},1)" aria-label="Mehr">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Desktop panel
+  const isEmpty = cart.length === 0;
+  document.getElementById('cartEmpty').classList.toggle('hidden', !isEmpty);
+  document.getElementById('cartItemsList').classList.toggle('hidden', isEmpty);
+  document.getElementById('cupChoice').classList.toggle('hidden', isEmpty);
+  document.getElementById('cartTotals').classList.toggle('hidden', isEmpty);
+  if(!isEmpty) {
+    document.getElementById('cartItemsList').innerHTML = itemsHtml;
+    document.getElementById('subtotal').textContent = total.toFixed(2).replace('.',',') + ' €';
+    document.getElementById('pfandAmt').textContent = pfand.toFixed(2).replace('.',',') + ' €';
+    document.getElementById('totalAmt').textContent = grandTotal.toFixed(2).replace('.',',') + ' €';
+  }
+
+  // Mobile modal
+  document.getElementById('cartModalEmpty').classList.toggle('hidden', !isEmpty);
+  document.getElementById('cartModalItems').classList.toggle('hidden', isEmpty);
+  document.getElementById('cartModalCup').classList.toggle('hidden', isEmpty);
+  document.getElementById('cartModalTotals').classList.toggle('hidden', isEmpty);
+  if(!isEmpty) {
+    document.getElementById('cartModalItems').innerHTML = itemsHtml;
+    document.getElementById('m-subtotal').textContent = total.toFixed(2).replace('.',',') + ' €';
+    document.getElementById('m-pfand').textContent = pfand.toFixed(2).replace('.',',') + ' €';
+    document.getElementById('m-total').textContent = grandTotal.toFixed(2).replace('.',',') + ' €';
+  }
+}
+
+function selectCup(type, el) {
+  cupType = type;
+  document.querySelectorAll('.cup-opt').forEach(o => {
+    o.classList.remove('selected');
+    o.setAttribute('aria-checked','false');
+  });
+  el.classList.add('selected');
+  el.setAttribute('aria-checked','true');
+  updateCartUI();
+}
+
+/* ── MODALS ── */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const modal = document.querySelector(`#${id} .modal`);
+  if(modal) { setTimeout(() => { const fc = modal.querySelector('button,input,[tabindex]'); if(fc) fc.focus(); }, 100); }
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeOnOverlay(e, id) {
+  if(e.target === document.getElementById(id)) closeModal(id);
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+});
+
+/* ── PAYMENT ── */
+function selectPayMethod(el) {
+  document.querySelectorAll('.pay-method').forEach(m => { m.classList.remove('selected'); m.setAttribute('aria-checked','false'); });
+  el.classList.add('selected');
+  el.setAttribute('aria-checked','true');
+}
+function confirmPayment() {
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0) + (cupType==='reusable'?1:0);
+  closeModal('payModal');
+  cart = [];
+  updateCartUI();
+  document.getElementById('pointsCount').textContent = parseInt(document.getElementById('pointsCount').textContent) + Math.floor(total * 10);
+  document.getElementById('rewardsPts').textContent  = parseInt(document.getElementById('rewardsPts').textContent) + Math.floor(total * 10);
+  showToast(`🎉 ${currentLang==='de'?'Zahlung erfolgreich! Guten Appetit!':'Payment successful! Enjoy your meal!'}`);
+}
+
+/* ── ACCESSIBILITY ── */
+function toggleHighContrast(el) {
+  document.documentElement.classList.toggle('hc', el.checked);
+}
+function toggleLargeText(el) {
+  document.documentElement.classList.toggle('large-text', el.checked);
+}
+function toggleAudio() {
+  const bar = document.getElementById('audioBar');
+  const chk = document.getElementById('toggleAudio');
+  const active = chk ? chk.checked : !bar.classList.contains('hidden');
+  bar.classList.toggle('hidden', !active);
+}
+function speakText(text) {
+  if('speechSynthesis' in window) {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = currentLang === 'de' ? 'de-DE' : 'en-US';
+    speechSynthesis.speak(utt);
+  }
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── INIT ── */
+renderProducts();
+// Wire allergen checkboxes
+['Gluten','Lactose','Nuts','Eggs','Fish','Vegan'].forEach(k => {
+  const el = document.getElementById('filter'+k);
+  if(el) el.addEventListener('change', renderProducts);
+});
+</script>
+</body>
+</html>

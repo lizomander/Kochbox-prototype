@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KochBox Inclusive Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    :root {
+      --green: #1f4e3d; --green-light: #2d6e55; --green-pale: #eaf3de;
+      --amber: #f4a227; --cream: #fdf8f0; --white: #ffffff;
+      --text: #1a1a1a; --text-muted: #7a7a7a; --border: #e5dfd5;
+      --font-serif: 'Fraunces', serif; --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-sans); }
+    body { background-color: #e5e7eb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 20px; }
+    
+    /* The Physical Machine Frame */
+    .machine-chassis {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 30px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.4), inset 0 2px 10px rgba(255,255,255,0.1);
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* 1. The Screen (Software) */
+    .screen {
+      background: var(--cream);
+      border-radius: 16px;
+      height: 650px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .s-header {
+      background: var(--green);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .s-logo { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    
+    .s-body { padding: 30px; flex: 1; overflow-y: auto; }
+    .s-title { font-family: var(--font-serif); font-size: 2rem; color: var(--green); margin-bottom: 10px; }
+    .s-sub { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
+
+    .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    
+    .option-card {
+      background: var(--white); border: 2px solid var(--border); border-radius: 20px;
+      padding: 30px 20px; text-align: center; cursor: pointer; transition: 0.2s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+    .option-card:hover { border-color: var(--green); transform: translateY(-3px); box-shadow: 0 12px 25px rgba(31, 78, 61, 0.15); }
+    .option-icon { font-size: 4.5rem; margin-bottom: 15px; }
+    .option-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+    .option-desc { font-size: 0.95rem; color: var(--text-muted); }
+    
+    .option-card.highlight { background: var(--green-pale); border-color: #c0dd97; }
+
+    /* Focus state mimicking tactile navigation */
+    .simulated-focus { outline: 4px solid var(--amber); outline-offset: 4px; border-color: var(--amber); }
+
+    /* 2. The Hardware Panel (Below Screen) */
+    .hardware-panel {
+      background: #2a2a2a;
+      border-radius: 20px;
+      padding: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #444;
+      position: relative;
+    }
+
+    .hw-label {
+      position: absolute; top: -12px; left: 20px; background: var(--amber); color: #111;
+      padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    }
+
+    /* Audio & Braille Nav Pad */
+    .tactile-cluster { display: flex; align-items: center; gap: 25px; }
+    
+    .audio-jack {
+      width: 50px; height: 50px; border-radius: 50%; background: #1a1a1a; border: 2px solid #555;
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .audio-jack::after { content: ''; width: 15px; height: 15px; background: #000; border-radius: 50%; border: 2px solid #333; }
+    .audio-icon { position: absolute; top: -25px; color: #888; font-size: 1.2rem; }
+
+    .nav-pad {
+      display: grid; grid-template-columns: 40px 40px 40px; grid-template-rows: 40px 40px 40px; gap: 8px;
+    }
+    .hw-btn {
+      background: #444; border: none; border-radius: 8px; box-shadow: 0 4px 0 #111, inset 0 2px 2px rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center; color: white; cursor: pointer;
+    }
+    .hw-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+    .hw-btn.ok { background: #2e7d32; box-shadow: 0 4px 0 #1b5e20; grid-column: 2; grid-row: 2; border-radius: 50%; }
+    .hw-btn.up { grid-column: 2; grid-row: 1; }
+    .hw-btn.down { grid-column: 2; grid-row: 3; }
+    .hw-btn.left { grid-column: 1; grid-row: 2; }
+    .hw-btn.right { grid-column: 3; grid-row: 2; }
+
+    /* NFC Reader */
+    .nfc-reader {
+      background: #111; width: 100px; height: 100px; border-radius: 16px; border: 2px solid #555;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888;
+    }
+    .nfc-reader i { font-size: 2.5rem; color: #4caf50; margin-bottom: 5px; }
+    .nfc-reader span { font-size: 0.75rem; font-weight: 600; text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <div class="machine-chassis">
+    
+    <div class="screen">
+      <div class="s-header">
+        <div class="s-logo"><i class="ti ti-leaf" style="color:var(--amber)"></i> KochBox</div>
+        <div style="font-weight: 600; font-size: 1.1rem;"><i class="ti ti-building"></i> THI Library</div>
+      </div>
+      
+      <div class="s-body">
+        <h1 class="s-title">Hungrig?</h1>
+        <p class="s-sub">Wähle eine Option auf dem Bildschirm, oder nutze das Tastaturfeld unten.</p>
+
+        <div class="grid-options">
+          <div class="option-card highlight simulated-focus">
+            <div class="option-icon">📱</div>
+            <div class="option-title">Abholen</div>
+            <div class="option-desc">Vorbestellung aus der App scannen</div>
+          </div>
+
+          <div class="option-card">
+            <div class="option-icon">🍲</div>
+            <div class="option-title">Menü ansehen</div>
+            <div class="option-desc">Warme Speisen direkt hier kaufen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hardware-panel">
+      <div class="hw-label">Inklusive Hardware (Tactile & Audio)</div>
+      
+      <div class="tactile-cluster">
+        <div class="audio-jack" title="Audio Jack for Visually Impaired">
+          <i class="ti ti-headphones audio-icon"></i>
+        </div>
+
+        <div class="nav-pad">
+          <button class="hw-btn up"><i class="ti ti-chevron-up"></i></button>
+          <button class="hw-btn left"><i class="ti ti-chevron-left"></i></button>
+          <button class="hw-btn ok">OK</button>
+          <button class="hw-btn right"><i class="ti ti-chevron-right"></i></button>
+          <button class="hw-btn down"><i class="ti ti-chevron-down"></i></button>
+        </div>
+      </div>
+
+      <div class="nfc-reader" title="Tap phone to auto-dispense pre-order">
+        <i class="ti ti-nfc"></i>
+        <span>Handy<br>auflegen</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
